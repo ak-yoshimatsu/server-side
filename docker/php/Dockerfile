@@ -28,4 +28,4 @@ RUN groupadd -g $GID $GROUPNAME && \
 
 USER $USERNAME
 
-WORKDIR /data
+WORKDIR /app

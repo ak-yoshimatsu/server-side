@@ -1,6 +1,19 @@
 name: server-side
 
 services:
+  # Webサーバコンテナ
+  web:
+    build:
+      context: ./docker/nginx
+      dockerfile: Dockerfile
+    ports:
+      - 8080:80 # ホスト側:コンテナ側
+    volumes:
+      - ./src:/app
+    container_name: nginx
+    hostname: nginx-host
+
+  # アプリケーションサーバコンテナ
   app:
     build:
       context: ./docker/php
@@ -13,18 +26,7 @@ services:
     container_name: app
     hostname: php-host
     volumes:
-      - ./src:/data # ./srcディレクトリをappのコンテナ内/dataへマウント
-
-  web:
-    build:
-      context: ./docker/nginx
-      dockerfile: Dockerfile
-    ports:
-      - 8080:80 # ホスト側:コンテナ側
-    volumes:
-      - ./src:/data
-    container_name: nginx
-    hostname: nginx-host
+      - ./src:/app # ./srcディレクトリをappのコンテナ内/dataへマウント
 
     # データベースコンテナ
   db:
@@ -32,6 +34,7 @@ services:
       context: ./docker/postgres
       dockerfile: Dockerfile
     container_name: postgres
+    platform: linux/amd64
     ports:
       - 5432:5432
     volumes:
