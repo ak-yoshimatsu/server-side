@@ -23,10 +23,10 @@ services:
         - GID=1000
         - USERNAME=phper
         - GROUPNAME=phper
-    container_name: app
+    container_name: php
     hostname: php-host
     volumes:
-      - ./src:/app # ./srcディレクトリをappのコンテナ内/dataへマウント
+      - ./src:/app # ./srcディレクトリをappのコンテナ内/appにマウント
 
     # データベースコンテナ
   db:
