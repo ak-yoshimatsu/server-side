@@ -1,0 +1,15 @@
+-- posts テーブル
+CREATE TABLE posts (
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    content TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- comments テーブル
+CREATE TABLE comments (
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    post_id INTEGER REFERENCES posts(id) NOT NULL,
+    content TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

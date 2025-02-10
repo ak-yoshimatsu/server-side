@@ -1,0 +1,41 @@
+name: server-side
+
+services:
+  app:
+    build:
+      context: ./docker/php
+      dockerfile: Dockerfile
+      args:
+        - UID=1000
+        - GID=1000
+        - USERNAME=phper
+        - GROUPNAME=phper
+    container_name: app
+    hostname: php-host
+    volumes:
+      - ./src:/data # ./srcディレクトリをappのコンテナ内/dataへマウント
+
+  web:
+    build:
+      context: ./docker/nginx
+      dockerfile: Dockerfile
+    ports:
+      - 8080:80 # ホスト側:コンテナ側
+    volumes:
+      - ./src:/data
+    container_name: nginx
+    hostname: nginx-host
+
+    # データベースコンテナ
+  db:
+    build:
+      context: ./docker/postgres
+      dockerfile: Dockerfile
+    container_name: postgres
+    ports:
+      - 5432:5432
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+volumes:
+  db-data:
