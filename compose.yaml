@@ -7,11 +7,16 @@ services:
       context: ./docker/nginx
       dockerfile: Dockerfile
     ports:
-      - 8080:80 # ホスト側:コンテナ側
+      - target: 80 # コンテナ内のポート（アプリケーションがリッスンするポート）
+        published: 8080 # ホストで公開するポート
+        protocol: tcp # プロトコルの指定（例: tcp, udp）
+        mode: ingress # デフォルトは 'ingress'（bridge モード）
     volumes:
-      - ./src:/app
-    container_name: nginx
-    hostname: nginx-host
+      - type: bind
+        source: ./src # ホスト側のソースディレクトリ
+        target: /app # コンテナ内のマウントポイント
+    container_name: nginx # コンテナ名の指定
+    hostname: nginx-host # ホスト名の指定
 
   # アプリケーションサーバコンテナ
   app:
@@ -26,7 +31,9 @@ services:
     container_name: php
     hostname: php-host
     volumes:
-      - ./src:/app # ./srcディレクトリをappのコンテナ内/appにマウント
+      - type: bind # ./srcディレクトリをappのコンテナ内/appにマウント
+        source: ./src
+        target: /app
 
     # データベースコンテナ
   db:
@@ -36,9 +43,14 @@ services:
     container_name: postgres
     platform: linux/amd64
     ports:
-      - 5432:5432
+      - target: 5432
+        published: 5432
+        protocol: tcp
+        mode: ingress
     volumes:
-      - db-data:/var/lib/postgresql/data
+      - type: volume
+        source: db-data
+        target: /var/lib/postgresql/data
 
 volumes:
   db-data:
